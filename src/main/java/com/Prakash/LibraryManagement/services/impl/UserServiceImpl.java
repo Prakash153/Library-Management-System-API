@@ -53,14 +53,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUserDetails(long id, UserDTO updateUser) {
         checkIfUserExists(id);
-            if(userRepository.existsById(id)) {
+
                 UserEntity updateUserEntity = modelMapper.map(updateUser, UserEntity.class);
                 updateUserEntity.setId(id);
 
                 return modelMapper.map(userRepository.save(updateUserEntity), UserDTO.class);
-            }
-            else
-                return null ;
+
     }
 
     @Override

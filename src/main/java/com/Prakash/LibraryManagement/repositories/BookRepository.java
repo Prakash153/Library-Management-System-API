@@ -22,5 +22,4 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("genre") String genre,
             @Param("isbn") String isbn
     );
-
 }

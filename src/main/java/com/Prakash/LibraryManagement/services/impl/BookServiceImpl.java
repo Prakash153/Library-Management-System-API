@@ -3,6 +3,7 @@ package com.Prakash.LibraryManagement.services.impl;
 import com.Prakash.LibraryManagement.dtos.BookDTO;
 import com.Prakash.LibraryManagement.dtos.TransactionDTO;
 import com.Prakash.LibraryManagement.entities.Book;
+import com.Prakash.LibraryManagement.entities.Transaction;
 import com.Prakash.LibraryManagement.exceptions.ResourceNotFoundException;
 import com.Prakash.LibraryManagement.repositories.BookRepository;
 import com.Prakash.LibraryManagement.repositories.TransactionRepository;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,9 +57,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<TransactionDTO> getBookTransactions(Long bookId) {
         checkIfExists(bookId);
-        return transactionRepository.findByBookId(bookId).stream()
-                .map(tx -> modelMapper.map(tx, TransactionDTO.class))
-                .toList();
+        List<Transaction> transactions = transactionRepository.findByBookId(bookId);
+        return transactions.stream()
+                .map(transaction -> modelMapper.map(transaction,TransactionDTO.class))
+                .collect(Collectors.toList());
+
     }
 
     @Override
