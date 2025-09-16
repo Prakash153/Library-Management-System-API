@@ -4,6 +4,7 @@ import com.Prakash.LibraryManagement.dtos.TransactionDTO;
 import com.Prakash.LibraryManagement.dtos.UserDTO;
 import com.Prakash.LibraryManagement.entities.Transaction;
 import com.Prakash.LibraryManagement.entities.UserEntity;
+import com.Prakash.LibraryManagement.exceptions.ResourceNotFoundException;
 import com.Prakash.LibraryManagement.repositories.TransactionRepository;
 import com.Prakash.LibraryManagement.repositories.UserRepository;
 import com.Prakash.LibraryManagement.services.UserService;
@@ -42,12 +43,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
+        checkIfUserExists(id);
          UserEntity userEntity = userRepository.findById(id).orElse(null);
          return modelMapper.map(userEntity,UserDTO.class);
     }
 
+
+
     @Override
     public UserDTO updateUserDetails(long id, UserDTO updateUser) {
+        checkIfUserExists(id);
             if(userRepository.existsById(id)) {
                 UserEntity updateUserEntity = modelMapper.map(updateUser, UserEntity.class);
                 updateUserEntity.setId(id);
@@ -60,15 +65,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(long id) {
+        checkIfUserExists(id);
         userRepository.deleteById(id);
     }
 
     @Override
     public List<TransactionDTO> getUserTransactions(long userId) {
+        checkIfUserExists(userId);
          List<Transaction> transactions = transactionRepository.findByUserId(userId);
          return transactions.stream()
                  .map(transaction ->
                          modelMapper.map(transaction,TransactionDTO.class))
                  .collect(Collectors.toList());
+    }
+    private void checkIfUserExists(Long id) {
+        boolean check = userRepository.existsById(id);
+        if(!check) throw new ResourceNotFoundException("user not found with id: "+ id);
     }
 }
